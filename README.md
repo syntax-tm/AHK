@@ -2,14 +2,15 @@
 
 A collection of my AutoHotKey scripts that I use with various games/applications.
 
-All of the *.ahk scripts add the following custom menu items to the Tray menu.
+All of the `*.ahk` scripts add the following items to the Tray menu.
 
 - Launch Game
-  - _Uses the steam://rungameid/{APPID} to launch the game via Steam_
+  - _Uses the steam://rungameid/{APPID} URL association to launch the game via Steam_
 - Open Game Config
 - Open Game Directory
-- Start OBS
+- Start [OBS](https://obsproject.com/)
   - _Will bring OBS into foreground if it's already running_
+- View on [PC Gaming Wiki](https://www.pcgamingwiki.com)
 
 ## AutoHotKey Scripts (*.ahk)
 
@@ -52,6 +53,15 @@ Finds the installation directory for an installed game. Will check the registry 
 ### Open-OBS.ps1
 
 Finds the OBS path in the registry and then searches for the `OBS{32|64}.exe` file. If OBS is already running, it will activate it using the Win32 API. If OBS is not already running it will start it.
+
+## TODO
+
+- [ ] Add ToolTips to the Tray menu items
+- [ ] Move reusable code into its own script
+- [ ] Add ability to configure menu items
+- [ ] Add SteamDB to the Tray menu
+- [ ] Add Steam Store to the Tray menu
+- [ ] Add launch Steam to the Tray menu
 
 ## Image Resources
 
