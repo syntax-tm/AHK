@@ -33,7 +33,7 @@ Menu, Tray, Add, Open RE5 Config, ConfigHandler
 Menu, Tray, Icon, Open RE5 Config, resources\cog.ico,, 24
 
 Menu, Tray, Add, Open Game Directory, GameDirHandler
-Menu, Tray, Icon, Open Game Directory, resources\steam_folder_blue.ico,, 24
+Menu, Tray, Icon, Open Game Directory, resources\steam_folder.ico,, 24
 
 Menu, Tray, Add ; separator
 
