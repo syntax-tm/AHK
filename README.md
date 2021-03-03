@@ -17,9 +17,12 @@ All of the `*.ahk` scripts add the following items to the Tray menu.
 - Launch Game
   - _Uses the steam://rungameid/{APPID} URL association to launch the game via Steam_
 - Open Game Config
+- Open Input Config
+  - _If available_
 - Open Game Directory
 - Start [OBS](https://obsproject.com/)
   - _Will bring OBS into foreground if it's already running_
+- View on [SteamDB](https://www.steamdb.info)
 - View on [PC Gaming Wiki](https://www.pcgamingwiki.com)
 
 ## AutoHotKey Scripts (*.ahk)
