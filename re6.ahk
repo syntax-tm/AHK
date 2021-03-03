@@ -42,6 +42,9 @@ Menu, Tray, Icon, Open Game Directory, resources\steam_folder.ico,, 24
 
 Menu, Tray, Add ; separator
 
+Menu, Tray, Add, View on SteamDB, OpenSteamDBHandler
+Menu, Tray, Icon, View on SteamDB, resources\steamdb.ico,, 24
+
 Menu, Tray, Add, View on PCGW, OpenPCGWHandler
 Menu, Tray, Icon, View on PCGW, resources\pcgw.ico,, 24
 
@@ -87,16 +90,20 @@ GameDirHandler:
     Run, powershell.exe -windowstyle hidden %A_ScriptDir%\scripts\Open-GameDirectory.ps1 '%gameName%'
     return
 
-OBSHandler:
-    Run, powershell.exe -windowstyle hidden %A_ScriptDir%\scripts\Open-OBS.ps1
-    return
-
 LaunchGameHandler:
     Run, steam://rungameid/%gameId%
     return
 
+OpenSteamDBHandler:
+    Run, https://steamdb.info/app/%gameId%/
+    return
+
 OpenPCGWHandler:
     Run, https://www.pcgamingwiki.com/api/appid.php?appid=%gameId%
+    return
+
+OBSHandler:
+    Run, powershell.exe -windowstyle hidden %A_ScriptDir%\scripts\Open-OBS.ps1
     return
 
 #IfWinActive RESIDENT EVIL 6

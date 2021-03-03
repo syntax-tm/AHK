@@ -11,8 +11,7 @@ A collection of my AutoHotKey scripts that I use with various games/applications
 
 ### Tray Menu
 
-All of the `*.ahk` scripts add the following items to the Tray menu
-All of the `*.ahk` scripts add the following items to the Tray menu.
+All of the `*.ahk` scripts add the following items to the Tray menu:
 
 - Launch Game
   - _Uses the steam://rungameid/{APPID} URL association to launch the game via Steam_

@@ -90,20 +90,20 @@ GameDirHandler:
     Run, powershell.exe -windowstyle hidden %A_ScriptDir%\scripts\Open-GameDirectory.ps1 '%gameName%'
     return
 
-OBSHandler:
-    Run, powershell.exe -windowstyle hidden %A_ScriptDir%\scripts\Open-OBS.ps1
-    return
-
 LaunchGameHandler:
     Run, steam://rungameid/%gameId%
+    return
+
+OpenSteamDBHandler:
+    Run, https://steamdb.info/app/%gameId%/
     return
 
 OpenPCGWHandler:
     Run, https://www.pcgamingwiki.com/api/appid.php?appid=%gameId%
     return
 
-OpenSteamDBHandler:
-    Run, https://steamdb.info/app/%gameId%/
+OBSHandler:
+    Run, powershell.exe -windowstyle hidden %A_ScriptDir%\scripts\Open-OBS.ps1
     return
 
 #IfWinActive Resident Evil 4
