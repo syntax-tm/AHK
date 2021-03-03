@@ -8,17 +8,17 @@ gameIcon := "resources\re5dx9.ico"
 ; rather than go through steam's .vdf files and search all of the library folders
 ; CAPCOM stores the path in their HKLM\Software reg key
 GetInstallDir() {
-    RegRead, RE5InstallDir, HKEY_LOCAL_MACHINE, SOFTWARE\WOW6432Node\Capcom\RESIDENT EVIL 5, installdir
-    return RE5InstallDir
+    RegRead, InstallDir, HKEY_LOCAL_MACHINE, SOFTWARE\WOW6432Node\Capcom\RESIDENT EVIL 5, installdir
+    return InstallDir
 }
 
 GetConfigFile() {
-    RE5ConfigFile = %A_MyDocuments%\CAPCOM\RESIDENT EVIL 5\config.ini
-    if !FileExist(RE5ConfigFile) {
-        MsgBox, % "The RE5 config file '" . RE5ConfigFile . "' does not exist."
+    ConfigFile = %A_MyDocuments%\CAPCOM\RESIDENT EVIL 5\config.ini
+    if !FileExist(ConfigFile) {
+        MsgBox, % "The " . gameName . " config file '" . ConfigFile . "' does not exist."
         return
     }
-    return RE5ConfigFile
+    return ConfigFile
 }
 
 ; removes the standard menu items
@@ -36,6 +36,9 @@ Menu, Tray, Add, Open Game Directory, GameDirHandler
 Menu, Tray, Icon, Open Game Directory, resources\steam_folder.ico,, 24
 
 Menu, Tray, Add ; separator
+
+Menu, Tray, Add, View on SteamDB, OpenSteamDBHandler
+Menu, Tray, Icon, View on SteamDB, resources\steamdb.ico,, 24
 
 Menu, Tray, Add, View on PCGW, OpenPCGWHandler
 Menu, Tray, Icon, View on PCGW, resources\pcgw.ico,, 24
@@ -88,6 +91,10 @@ LaunchGameHandler:
 
 OpenPCGWHandler:
     Run, https://www.pcgamingwiki.com/api/appid.php?appid=%gameId%
+    return
+
+OpenSteamDBHandler:
+    Run, https://steamdb.info/app/%gameId%/
     return
 
 #IfWinActive RESIDENT EVIL 5

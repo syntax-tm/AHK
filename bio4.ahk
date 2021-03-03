@@ -1,12 +1,12 @@
 #Persistent
 #SingleInstance, force
 
-gameId := 221040
-gameName := "Resident Evil 6"
-gameIcon := "resources\bh6.ico"
+gameId := 254700
+gameName := "Resident Evil 4"
+gameIcon := "resources\bio4.ico"
 
 GetConfigFile() {
-    ConfigFile = %A_MyDocuments%\CAPCOM\RESIDENT EVIL 6\config.ini
+    ConfigFile = %A_MyDocuments%\My Games\Capcom\RE4\config.ini
     if !FileExist(ConfigFile) {
         MsgBox, % "The " . gameName . " config file '" . ConfigFile . "' does not exist."
         return
@@ -15,12 +15,12 @@ GetConfigFile() {
 }
 
 GetUserInputConfigFile() {
-    UsrInputConfigFile = %A_MyDocuments%\CAPCOM\RESIDENT EVIL 6\mapping.ini
-    if !FileExist(UsrInputConfigFile) {
+    UsrInputConfigFile = %A_MyDocuments%\My Games\Capcom\RE4\usr_input.ini
+    if !FileExist(ConfigFile) {
         MsgBox, % "The " . gameName . " input config file '" . UsrInputConfigFile . "' does not exist."
         return
     }
-    return UsrInputConfigFile
+    return ConfigFile
 }
 
 ; removes the standard menu items
@@ -31,8 +31,8 @@ Menu, Tray, Icon, Launch %gameName%, %gameIcon%,, 24
 
 Menu, Tray, Add ; separator
 
-Menu, Tray, Add, Open RE6 Config, ConfigHandler
-Menu, Tray, Icon, Open RE6 Config, resources\cog.ico,, 24
+Menu, Tray, Add, Open %gameName% Config, ConfigHandler
+Menu, Tray, Icon, Open %gameName% Config, resources\cog.ico,, 24
 
 Menu, Tray, Add, Open %gameName% Input Config, InputConfigHandler
 Menu, Tray, Icon, Open %gameName% Input Config, resources\keyboard.ico,, 24
@@ -41,6 +41,9 @@ Menu, Tray, Add, Open Game Directory, GameDirHandler
 Menu, Tray, Icon, Open Game Directory, resources\steam_folder.ico,, 24
 
 Menu, Tray, Add ; separator
+
+Menu, Tray, Add, View on SteamDB, OpenSteamDBHandler
+Menu, Tray, Icon, View on SteamDB, resources\steamdb.ico,, 24
 
 Menu, Tray, Add, View on PCGW, OpenPCGWHandler
 Menu, Tray, Icon, View on PCGW, resources\pcgw.ico,, 24
@@ -99,14 +102,17 @@ OpenPCGWHandler:
     Run, https://www.pcgamingwiki.com/api/appid.php?appid=%gameId%
     return
 
-#IfWinActive RESIDENT EVIL 6
+OpenSteamDBHandler:
+    Run, https://steamdb.info/app/%gameId%/
+    return
 
-w::Up      ; Makes the 'w' key send an 'Up' key
-a::Left    ; Makes the 'a' key send a 'Left' key
-s::Down    ; Makes the 's' key send a 'Down' key
-d::Right   ; Makes the 'd' key send a 'Right' key
+#IfWinActive Resident Evil 4
 
-LShift::Space  ; Makes the 'Left Shift' key send a 'Space' key
+; WARN:
+;   the 'f' key by default is the 'Ashley' key,
+;   so rebinding it here means you need to rebind that action
+;   otherwise the 'Ashley' commands will not work
+f::Enter   ; Makes the 'f' key send an 'Enter' key
 
 LWin::Return   ; Disables the 'Left Win' key
 RWin::Return   ; Disables the 'Right Win' key

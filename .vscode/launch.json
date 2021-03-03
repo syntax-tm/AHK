@@ -26,6 +26,17 @@
             "script": "${workspaceFolder}/scripts/Open-GameDirectory.ps1",
             "args": [ "\"Resident Evil 6\"" ],
             "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "PowerShell: Show-Notification",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}/scripts/Show-Notification.ps1",
+            "args": [
+                "\"Resident Evil 6\"",
+                "\"${workspaceFolder}/resources/re6.ico\""
+            ],
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

@@ -14,6 +14,18 @@ All of the `*.ahk` scripts add the following items to the Tray menu.
 
 ## AutoHotKey Scripts (*.ahk)
 
+### bio4.ahk
+
+Script for **Resident Evil 4**. Disables the Windows keys and rebinds the `f` key to `Enter` only active when the game's window is active.
+
+```AutoHotKey
+f::Enter   ; Makes the 'f' key send an 'Enter' key
+```
+
+#### Warning
+
+The `f` key by default is the '_Ashley_' key in **Resident Evil 4** so rebinding it here means that you will need rebind that action otherwise the '_Ashley_' commands will not work.
+
 ### re5dx9.ahk
 
 Script for **Resident Evil 5**. Only active when the game's window is active.
