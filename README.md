@@ -2,6 +2,16 @@
 
 A collection of my AutoHotKey scripts that I use with various games/applications.
 
+## Features
+
+- Startup notification
+- Customized Tray menu (see below)
+- Disable Windows keys while in-game
+- Key bindings only active while in-game
+
+### Tray Menu
+
+All of the `*.ahk` scripts add the following items to the Tray menu
 All of the `*.ahk` scripts add the following items to the Tray menu.
 
 - Launch Game
