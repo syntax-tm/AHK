@@ -1,15 +1,28 @@
 #Persistent
 #SingleInstance, force
 
+; uncomment this if script keys are noticeably slower than normal
+;Process, Priority, , High
+
 gameId := 21690
 gameName := "Resident Evil 5"
 gameIcon := "resources\re5dx9.ico"
 
+obsScript := %A_ScriptDir%\scripts\Open-OBS.ps1
+obsScriptExists := FileExist(%obsScript%)
+
 ; rather than go through steam's .vdf files and search all of the library folders
 ; CAPCOM stores the path in their HKLM\Software reg key
 GetInstallDir() {
-    RegRead, InstallDir, HKEY_LOCAL_MACHINE, SOFTWARE\WOW6432Node\Capcom\RESIDENT EVIL 5, installdir
-    return InstallDir
+    Try
+    {
+        RegRead, InstallDir, HKEY_LOCAL_MACHINE, SOFTWARE\WOW6432Node\Capcom\RESIDENT EVIL 5, installdir
+        return InstallDir
+    }
+    Catch e
+    {
+        MsgBox, An error occurred looking for the %gameName% install directory. %e%
+    }
 }
 
 GetConfigFile() {
