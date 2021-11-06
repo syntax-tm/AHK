@@ -14,13 +14,16 @@ A collection of my AutoHotKey scripts that I use with various games/applications
 All of the `*.ahk` scripts add the following items to the Tray menu:
 
 - Launch Game
-  - _Uses the steam://rungameid/{APPID} URL association to launch the game via Steam_
 - Edit Menu
   - Open Game Directory
+  - Open Save Directory
   - Edit Game Config
   - Edit Input Config
     - _If available_
 - Resources Menu
+  - View on [Steam Store](https://store.steampowered.com)
+  - View on [Steam Community](http://steamcommunity.com/)
+  - View Guides on [Steam Community](https://steamcommunity.com/?subsection=guides)
   - View on [SteamDB](https://www.steamdb.info)
   - View on [PC Gaming Wiki](https://www.pcgamingwiki.com)
 - Tools Menu

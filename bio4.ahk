@@ -1,109 +1,56 @@
 #Persistent
 #SingleInstance, force
+SendMode Input
+SetWorkingDir, %A_ScriptDir%
 
-gameId := 254700
-gameName := "Resident Evil 4"
-gameIcon := "resources\bio4.ico"
+; uncomment this if script keys are noticeably slower than normal
+;Process, Priority, , High
 
-GetConfigFile() {
-    ConfigFile = %A_MyDocuments%\My Games\Capcom\RE4\config.ini
-    if !FileExist(ConfigFile) {
-        MsgBox, % "The " . gameName . " config file '" . ConfigFile . "' does not exist."
-        return
-    }
-    return ConfigFile
-}
+; hotkey customizations (true = enabled, false = disabled)
+global DisableWinKeys     := true
 
-GetUserInputConfigFile() {
-    UsrInputConfigFile = %A_MyDocuments%\My Games\Capcom\RE4\usr_input.ini
-    if !FileExist(ConfigFile) {
-        MsgBox, % "The " . gameName . " input config file '" . UsrInputConfigFile . "' does not exist."
-        return
-    }
-    return ConfigFile
-}
+global AppId := 254700
+global GameName := "Resident Evil 4"
 
-; removes the standard menu items
-Menu, Tray, NoStandard
+; import the shared script functions after we declared the AppId and GameName
+#Include, scripts/ahk_shared.ahk
 
-Menu, Tray, Add, Launch %gameName%, LaunchGameHandler
-Menu, Tray, Icon, Launch %gameName%, %gameIcon%,, 24
+RemoveStandardMenuItems()
 
-Menu, Tray, Add ; separator
+AddGameTrayMenuItems()
 
-Menu, Tray, Add, Open %gameName% Config, ConfigHandler
-Menu, Tray, Icon, Open %gameName% Config, resources\cog.ico,, 24
+Menu, EditMenu, Add
 
-Menu, Tray, Add, Open %gameName% Input Config, InputConfigHandler
-Menu, Tray, Icon, Open %gameName% Input Config, resources\keyboard.ico,, 24
+Menu, EditMenu, Add, &Edit Config, ConfigHandler
+Menu, EditMenu, Icon, &Edit Config, imageres.dll, 63
 
-Menu, Tray, Add, Open Game Directory, GameDirHandler
-Menu, Tray, Icon, Open Game Directory, resources\steam_folder.ico,, 24
+Menu, EditMenu, Add, Edit &Input Config, InputConfigHandler
+Menu, EditMenu, Icon, Edit &Input Config, setupapi.dll, -40
 
-Menu, Tray, Add ; separator
+AddToolMenuItems()
 
-Menu, Tray, Add, View on SteamDB, OpenSteamDBHandler
-Menu, Tray, Icon, View on SteamDB, resources\steamdb.ico,, 24
+AddStandardTrayMenuItems()
 
-Menu, Tray, Add, View on PCGW, OpenPCGWHandler
-Menu, Tray, Icon, View on PCGW, resources\pcgw.ico,, 24
-
-Menu, Tray, Add ; separator
-
-Menu, Tray, Add, Open OBS, OBSHandler
-Menu, Tray, Icon, Open OBS, resources\obs.ico,, 24
-
-Menu, Tray, Add ; separator
-
-; adds the standard menu items
-Menu, Tray, Standard
-
-; removes the default menu item
-Menu, Tray, NoDefault
-
-; displays a notification that the script is now running
-TrayTip, %gameName% AutoHotKey Started, The %gameName% AutoHotKey (AHK) script is running. Click the tray icon for more options.,,1
-SetTimer, HideTrayTip, -2000
-
-HideTrayTip() {
-    TrayTip  ; Attempt to hide it the normal way.
-    if SubStr(A_OSVersion,1,3) = "10." {
-        Menu Tray, NoIcon
-        Sleep 200  ; It may be necessary to adjust this sleep.
-        Menu Tray, Icon
-    }
-}
+ShowNotification(GameName)
 
 return
 
 ConfigHandler:
-    ConfigFile := GetConfigFile()
+    global ConfigFile = Format("{1}\My Games\Capcom\RE4\config.ini", A_MyDocuments)
+    if !FileExist(ConfigFile) {
+        MsgBox, 48, % GameName . " Config File Missing", % "The " . GameName . " config file '" . ConfigFile . "' does not exist."
+        return
+    }
     Run, %ConfigFile%
     return
 
 InputConfigHandler:
-    InputConfigFile := GetUserInputConfigFile()
-    Run, %InputConfigFile%
-    return
-
-GameDirHandler:
-    Run, powershell.exe -windowstyle hidden %A_ScriptDir%\scripts\Open-GameDirectory.ps1 '%gameName%'
-    return
-
-LaunchGameHandler:
-    Run, steam://rungameid/%gameId%
-    return
-
-OpenSteamDBHandler:
-    Run, https://steamdb.info/app/%gameId%/
-    return
-
-OpenPCGWHandler:
-    Run, https://www.pcgamingwiki.com/api/appid.php?appid=%gameId%
-    return
-
-OBSHandler:
-    Run, powershell.exe -windowstyle hidden %A_ScriptDir%\scripts\Open-OBS.ps1
+    global UsrInputConfigFile := Format("{1}\My Games\Capcom\RE4\usr_input.ini", A_MyDocuments)
+    if !FileExist(UsrInputConfigFile) {
+        MsgBox, 48, % GameName . " Input Config File Missing", % "The " . GameName . " input config file '" . UsrInputConfigFile . "' does not exist."
+        return
+    }
+    Run, %UsrInputConfigFile%
     return
 
 #IfWinActive Resident Evil 4
@@ -114,7 +61,12 @@ OBSHandler:
 ;   otherwise the 'Ashley' commands will not work
 f::Enter   ; Makes the 'f' key send an 'Enter' key
 
-LWin::Return   ; Disables the 'Left Win' key
-RWin::Return   ; Disables the 'Right Win' key
+if (DisableWinKeys)
+{
+    LWin::Return   ; Disables the 'Left Win' key
+    RWin::Return   ; Disables the 'Right Win' key
+}
 
 #IfWinActive
+
+^+r::Reload        ; {Ctrl + Shift + r} reloads the current script
