@@ -1,9 +1,12 @@
 using namespace System.IO
 using namespace System.Text.RegularExpressions
 
-if ($args.Count -lt 1)
-{
-    Write-Host "No arguments passed to Open-GameDirectory."
+Add-Type -AssemblyName PresentationFramework
+
+$scriptName = Split-Path $PSCommandPath -Leaf
+
+if ($args.Count -lt 1) {
+    Write-Host "No arguments passed to '$scriptName'."
     return
 }
 

@@ -1,14 +1,20 @@
+using namespace System.IO
+using namespace System.Windows
+
+Add-Type -AssemblyName PresentationFramework
+
 Function Open-Process {
     Param(
-        [string] $proc,
-        [string] $adm
+        [string] $ExePath
     )
-    Clear-Host
+
+    $WorkingDir = Split-Path $ExePath
+    $ProcName = [Path]::GetFileNameWithoutExtension($ExePath)
 
 Add-Type @"
     using System;
     using System.Runtime.InteropServices;
-    public class WinAp {
+    public class WinApi {
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool SetForegroundWindow(IntPtr hWnd);
@@ -19,24 +25,34 @@ Add-Type @"
     }
 "@
 
-    $p = Get-Process | where { $_.mainWindowTitle } |
-        where { $_.Name -like "$proc" }
-    if (($p -eq $null) -and ($adm -ne "")) {
-        Start-Process "$proc" -Verb runAs
+    $proc = Get-Process | where { $_.mainWindowTitle } | where { $_.Name -like $ProcName }
+
+    if ($proc -ne $null)
+    {
+        $hwnd = $proc.MainWindowHandle
+        [void] [WinApi]::SetForegroundWindow($hwnd)
+        # https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showwindow
+        # 1 = SW_NORMAL
+        [void] [WinApi]::ShowWindow($hwnd, 1)
+        return
     }
-    elseif (($p -eq $null) -and ($adm -eq "")) {
-        Start-Process "$proc"
-    }
-    else {
-        $h = $p.MainWindowHandle
-        [void] [WinAp]::SetForegroundWindow($h)
-        [void] [WinAp]::ShowWindow($h, 3)
-    }
+    Start-Process -FilePath $ExePath -WorkingDirectory $WorkingDir
 }
 
-$obsPath = Get-ItemProperty "HKLM:\SOFTWARE\WOW6432Node\OBS Studio" | Select-Object -ExpandProperty "(default)"
-$obsExe = Get-ChildItem -Path $obsPath -Recurse -File -Include obs*.exe | Where-Object -FilterScript { $_ -match "\\obs(\d{2})\.exe$" }
+$OBSRegPath = Get-ItemProperty "HKLM:\SOFTWARE\WOW6432Node\OBS Studio" | select -ExpandProperty "(default)"
 
-Set-Location (Split-Path $obsExe)
+if ([string]::IsNullOrWhiteSpace($OBSRegPath) -or !(Test-Path $OBSRegPath)) {
+    $message = "Unable to find the current OBS installation path in the registry."
+    $message += "`r`n`r`nWould you like to open the official OBS Studio site?"
+    $response = [MessageBox]::Show($message, "OBS Path Not Found", [MessageBoxButton]::YesNo, [MessageBoxImage]::Warning)
 
-Open-Process $obsExe.FullName
+    if ($response -eq [MessageBoxResult]::Yes) {
+        Start-Process "https://obsproject.com/"
+    }
+
+    return
+}
+
+$OBSExe = gci -Path $obsPath -Recurse -File -Include obs*.exe | where { $_ -match "\\obs(?:\d{2})\.exe$" } | select -ExpandProperty FullName
+
+Open-Process $OBSExe

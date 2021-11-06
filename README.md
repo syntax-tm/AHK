@@ -15,14 +15,22 @@ All of the `*.ahk` scripts add the following items to the Tray menu:
 
 - Launch Game
   - _Uses the steam://rungameid/{APPID} URL association to launch the game via Steam_
-- Open Game Config
-- Open Input Config
-  - _If available_
-- Open Game Directory
-- Start [OBS](https://obsproject.com/)
-  - _Will bring OBS into foreground if it's already running_
-- View on [SteamDB](https://www.steamdb.info)
-- View on [PC Gaming Wiki](https://www.pcgamingwiki.com)
+- Edit Menu
+  - Open Game Directory
+  - Edit Game Config
+  - Edit Input Config
+    - _If available_
+- Resources Menu
+  - View on [SteamDB](https://www.steamdb.info)
+  - View on [PC Gaming Wiki](https://www.pcgamingwiki.com)
+- Tools Menu
+  - _User-defined application shortcuts_
+
+### Tools Menu
+
+At startup, any files contained in the `tools` directory will be added to the tray menu. This not only supports `*.lnk` files, including their target's icons, and `*.exe`, again with icons support, but any other file as well.
+
+Supports folders for organization but only one deep. So, `\tools\Streaming` would put everything in the `Streaming` folder under `Tools > Streaming` but `\tools\Streaming\BadExample` would not work.
 
 ## AutoHotKey Scripts (*.ahk)
 
@@ -53,6 +61,8 @@ d::Right   ; Makes the 'd' key send a 'Right' key
 By binding the `WASD` keys to the movement keys you can navigate menus (including inventory in-game) using `WASD` with `f` functioning as the `ENTER` key.
 
 You will need to rebind your movement keys in-game to use the arrow keys for this to work. It will also show QTE (Quick-Time Events) with the arrow keys, so just keep that in mind. Unfortunately, RE5 only supports one key binding per action so you can't have an alternate key (like in Revelations 2).
+
+By default, the script will also block the `Shift`+`RMouse` shotcut to reload your weapon. You can disable this by setting the `DisableShiftReload` to `False` (default is `True`).
 
 ### re6.ahk
 
