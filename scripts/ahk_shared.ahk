@@ -3,6 +3,12 @@ DirectoryExists(Path)
     return InStr(FileExist(Path), "D")
 }
 
+IsDirectory(Path)
+{
+    FileGetAttrib, PathAttribs, %Path%
+    return InStr(PathAttribs, "D") > 0
+}
+
 IsDirectoryEmpty(FullPath)
 {
     if !DirectoryExists(FullPath)
@@ -54,85 +60,92 @@ RemoveStandardMenuItems()
 
 AddToolMenuItems()
 {
-    TopMenu := Format("{1}\tools", A_WorkingDir)
-    if (!DirectoryExists(TopMenu)) {
+    ToolsDir := Format("{1}\tools", A_WorkingDir)
+    if !DirectoryExists(ToolsDir) {
+        FileCreateDir, %ToolsDir%
         return
     }
 
-    LastMenu := TopMenu
+    FileList := ""
+    RootFileList := ""
 
-    ; Loop through folders recursing subfolders.
-    Loop Files, %TopMenu%\*.*, DR  
+    Loop, Files, %ToolsDir%\*.*, FDR
     {
-        ; if directory is marked hidden, read-only, or system
-        If A_LoopFileAttrib contains H,R,S
-            Continue
+        isDirectory := IsDirectory(A_LoopFileFullPath)
+        isRoot := A_LoopFileDir = ToolsDir
+        isRootFile := !isDirectory and isRoot
+        isSubDir := isDirectory and !isRoot
 
-        ; if directory contains no files, skip
-        If !IsDirectoryEmpty(A_LoopFileFullPath)
-            Continue
-
-        ToolHandler := Func("LaunchTool").Bind(A_LoopFileFullPath)
-
-        SplitPath, A_LoopFileFullPath, FileName, FileDirectory, FileExtension, FileNameWithoutExt
-
-        ; Add folder to Menu
-        Menu, %A_LoopFileDir%, Add, %FileNameWithoutExt%, % ToolHandler
-        Menu, %A_LoopFileDir%, Icon, %FileNameWithoutExt%, imageres.dll, -10
-
-        ; Save menu name
-        LastMenu := A_LoopFileDir
+        FileList .= isDirectory "`t" !isSubDir "`t" A_LoopFileDir "`t" A_LoopFileLongPath "`n"   
     }
 
-    LastMenu := TopMenu
+    Sort, FileList
 
-    ; Loop through files recursing subfolders
-    Loop Files, %TopMenu%\*.*, FR
+    Loop, Parse, FileList, `n
     {
-        ; if directory is marked hidden, read-only, or system
-        If A_LoopFileAttrib contains H,R,S
-            Continue
+        if (A_LoopField = "")
+            continue
 
-        ToolHandler := Func("LaunchTool").Bind(A_LoopFileFullPath)
+        StringSplit, FileItem, A_LoopField, %A_Tab%
 
-        SplitPath, A_LoopFileFullPath, FileName, FileDirectory, FileExtension, FileNameWithoutExt
+        isDirectory := FileItem1
 
-        ; Add to Menu
-        Menu, %A_LoopFileDir%, Add, %FileNameWithoutExt%, % ToolHandler
+        SplitPath, FileItem4, LoopItemName, LoopItemDir, LoopItemExt, LoopItemNameNoExt, LoopItemDrive
+        SplitPath, LoopItemDir, ParentDirectoryName
 
-        if InStr(FileExtension, "lnk")
+        ToolHandler := Func("LaunchTool").Bind(A_LoopField)
+
+        if (ParentDirectoryName = "tools" and !isDirectory)
         {
-            FileGetShortcut, %A_LoopFileFullPath%, Location, OutDir, OutArgs, OutDescription, OutIcon, OutIconNum, OutRunState
-            Menu, %A_LoopFileDir%, Icon, %FileNameWithoutExt%, %Location%, 1
+            RootFileList .= FileItem4 "`n"
         }
-        else if InStr(FileExtension, "exe")
+        else If isDirectory
         {
-            Menu, %A_LoopFileDir%, Icon, %FileNameWithoutExt%, %A_LoopFileFullPath%, 1
+            Menu, %ParentDirectoryName%, Add, %LoopItemNameNoExt%, :%LoopItemNameNoExt%
+            Menu, %ParentDirectoryName%, Icon, %LoopItemNameNoExt%, imageres.dll, -190
         }
-        else if InStr(FileExtension, "ahk")
+        Else
         {
-            Menu, %A_LoopFileDir%, Icon, %FileNameWithoutExt%, %A_AhkPath%, 1
+            AddMenuItem(FileItem4)
         }
-
-        ; Attach submenu    
-        If ((A_LoopFileDir != LastMenu) and (LastMenu != TopMenu))
-            AddMenu(LastMenu)
-
-        ; Save menu name
-        LastMenu := A_LoopFileDir
     }
 
-    AddMenu(LastMenu)
+    Sort, RootFileList
 
-    Menu, Tray, Add, &Tools, :%TopMenu%
-    Menu, Tray, Icon, &Tools, imageres.dll, -10
+    Loop, Parse, RootFileList, `n
+    {
+        if (A_LoopField = "")
+            continue
+
+        AddMenuItem(A_LoopField)
+    }
+
+    Menu, Tray, Add, Tools, :Tools
+    Menu, Tray, Icon, Tools, imageres.dll, -197
 }
 
-AddMenu(MenuName) ; Attach submenu to next level
+AddMenuItem(Path)
 {
-    SplitPath, MenuName, DirName, OutDir
-    Menu, %OutDir%, Add, %DirName%, :%MenuName%
-    Menu, %OutDir%, Icon, %DirName%, imageres.dll, -10
+    SplitPath, Path, LoopItemName, LoopItemDir, LoopItemExt, LoopItemNameNoExt, LoopItemDrive
+    SplitPath, LoopItemDir, ParentDirectoryName
+
+    ToolHandler := Func("LaunchTool").Bind(Path)
+
+    Menu, %ParentDirectoryName%, Add, %LoopItemNameNoExt%, % ToolHandler
+
+    if (LoopItemExt = "lnk")
+    {
+        FileGetShortcut, %Path%, OutLocation, OutDir, OutArgs, OutDescription, OutIcon, OutIconNum, OutRunState
+        Menu, %ParentDirectoryName%, Icon, %LoopItemNameNoExt%, %OutLocation%, 1
+    }
+    else if (LoopItemExt = "exe")
+    {
+        Menu, %ParentDirectoryName%, Icon, %LoopItemNameNoExt%, %Path%, 1
+    }
+    else if (LoopItemExt = "ahk")
+    {
+        Menu, %ParentDirectoryName%, Icon, %LoopItemNameNoExt%, %A_AhkPath%, 1
+    }
 }
 
 AddGameTrayMenuItems()

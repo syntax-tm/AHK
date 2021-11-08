@@ -21,7 +21,11 @@ RemoveStandardMenuItems()
 
 AddGameTrayMenuItems()
 
-Menu, EditMenu, Insert, , Edit RE5 Config, ConfigHandler
+AddToolMenuItems()
+
+Menu, EditMenu, Add
+
+Menu, EditMenu, Add, Edit RE5 Config, ConfigHandler
 Menu, EditMenu, Icon, Edit RE5 Config, imageres.dll, 63
 
 AddStandardTrayMenuItems()
