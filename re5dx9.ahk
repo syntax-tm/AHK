@@ -53,7 +53,7 @@ d::Right   ; Makes the 'd' key send a 'Right' key
 
 if (DisableShiftReload)
 {
-    $RButton::RButton         ; Disables reloading when pressing shift
+    $RButton::RButton        ; Disables reloading when pressing shift
     RButton & ~Shift::Return ; while right mouse is down (aiming)
 }
 
