@@ -33,7 +33,7 @@ All of the `*.ahk` scripts add the following items to the Tray menu:
 
 At startup, any files contained in the `tools` directory will be added to the tray menu. This not only supports `*.lnk` files, including their target's icons, and `*.exe`, again with icons support, but any other file as well.
 
-Supports folders for organization but only one deep. So, `\tools\Streaming` would put everything in the `Streaming` folder under `Tools > Streaming` but `\tools\Streaming\BadExample` would not work.
+The tools menu supports folders for organization.
 
 ## AutoHotKey Scripts (*.ahk)
 
@@ -93,14 +93,13 @@ Finds the OBS path in the registry and then searches for the `OBS{32|64}.exe` fi
 
 ## TODO
 
-- [ ] Add ToolTips to the Tray menu items
-- [ ] Move reusable code into its own script
-- [ ] Add ability to configure menu items
-- [ ] Add SteamDB to the Tray menu
-- [ ] Add Steam Store to the Tray menu
+- [x] Add ToolTips to the Tray menu items
+- [x] Move reusable code into its own script
+- [x] Add ability to configure menu items
+- [x] Add SteamDB to the Tray menu
+- [x] Add Steam Store to the Tray menu
 - [ ] Add launch Steam to the Tray menu
 
 ## Image Resources
 
 - [PCGW icons](https://www.pcgamingwiki.com/wiki/PCGamingWiki:Icons)
-- [Papirus](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme/)
