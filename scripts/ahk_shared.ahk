@@ -1,6 +1,6 @@
 DirectoryExists(Path)
 { 
-    return InStr(FileExist(Path), "D")
+    return InStr(FileExist(Path), "D") > 0
 }
 
 IsDirectory(Path)
