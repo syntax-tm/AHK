@@ -87,9 +87,9 @@ By binding the `WASD` keys to the movement keys you can navigate menus (includin
 
 Finds the installation directory for an installed game. Will check the registry to get the default `InstallPath` for Steam and check the the `steamapps\common` directory. If it can't find the install in the default location it will check all of the library locations in the `steamapps\libraryfolders.vdf` config file. Once it finds the install directory, it will open it in File Explorer.
 
-### Open-OBS.ps1
+### Open-SteamUserData.ps1
 
-Finds the OBS path in the registry and then searches for the `OBS{32|64}.exe` file. If OBS is already running, it will activate it using the Win32 API. If OBS is not already running it will start it.
+Finds the currently signed in Steam user's save data folder and opens it in File Explorer.
 
 ## TODO
 
