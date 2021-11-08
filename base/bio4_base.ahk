@@ -1,5 +1,7 @@
 #Persistent
 #SingleInstance, force
+SendMode Input
+SetWorkingDir, %A_ScriptDir%
 
 ; uncomment this if script keys are noticeably slower than normal
 ;Process, Priority, , High
