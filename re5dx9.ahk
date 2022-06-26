@@ -1,14 +1,15 @@
 #Persistent
 #SingleInstance, force
-SendMode Input
+#MaxHotkeysPerInterval 200
+SendMode Event
 SetWorkingDir, %A_ScriptDir%
 
 ; uncomment this if script keys are noticeably slower than normal
 ;Process, Priority, , High
 
 ; hotkey customizations (true = enabled, false = disabled)
-global DisableShiftReload := true
-global DisableWinKeys     := true
+global DisableShiftReload := false
+global DisableWinKeys     := false
 
 ; you shouldn't need to change anything below here
 global AppId := 21690
@@ -17,20 +18,25 @@ global GameName := "Resident Evil 5"
 ; import the shared script functions after we declared the AppId and GameName
 #Include, scripts/ahk_shared.ahk
 
-RemoveStandardMenuItems()
+Try
+{
+    RemoveStandardMenuItems()
 
-AddGameTrayMenuItems()
+    AddGameTrayMenuItems()
 
-AddToolMenuItems()
+    AddToolMenuItems()
 
-Menu, EditMenu, Add
+    Menu, EditMenu, Add
 
-Menu, EditMenu, Add, Edit RE5 Config, ConfigHandler
-Menu, EditMenu, Icon, Edit RE5 Config, imageres.dll, 63
+    Menu, EditMenu, Add, Edit RE5 Config, ConfigHandler
+    Menu, EditMenu, Icon, Edit RE5 Config, imageres.dll, 63
+}
+Finally
+{
+    AddStandardTrayMenuItems()
 
-AddStandardTrayMenuItems()
-
-ShowNotification(GameName)
+    ShowNotification(GameName)
+}
 
 return
 
@@ -45,11 +51,11 @@ ConfigHandler:
 
 #IfWinActive RESIDENT EVIL 5
 
-f::Enter   ; Makes the 'f' key send an 'Enter' key
-w::Up      ; Makes the 'w' key send an 'Up' key
-a::Left    ; Makes the 'a' key send a 'Left' key
-s::Down    ; Makes the 's' key send a 'Down' key
-d::Right   ; Makes the 'd' key send a 'Right' key
+~f::Enter   ; Makes the 'f' key send an 'Enter' key
+~w::Up      ; Makes the 'w' key send an 'Up' key
+~a::Left    ; Makes the 'a' key send a 'Left' key
+~s::Down    ; Makes the 's' key send a 'Down' key
+~d::Right   ; Makes the 'd' key send a 'Right' key
 
 if (DisableShiftReload)
 {

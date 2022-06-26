@@ -1,5 +1,5 @@
 DirectoryExists(Path)
-{ 
+{
     return InStr(FileExist(Path), "D") > 0
 }
 
@@ -58,8 +58,40 @@ RemoveStandardMenuItems()
     Menu, Tray, NoStandard ; removes the standard menu items
 }
 
+AddChildAhkItems(FullPath)
+{
+    if !DirectoryExists(FullPath)
+        return
+
+    FileList := ""
+
+    Loop, Files, %FullPath%\*.ahk, F
+    {
+        FileList .= A_LoopFileLongPath "`n"
+    }
+
+    Sort, FileList
+
+    Loop, Parse, FileList, `n
+    {
+        if (A_LoopField = "")
+            continue
+
+        SplitPath, A_LoopField,,,, LoopItemNameNoExt
+
+        AHKHandler := Func("LaunchAHK").Bind(A_LoopField)
+
+        Menu, AHK, Add, %LoopItemNameNoExt%, % AHKHandler
+        Menu, AHK, Icon, %LoopItemNameNoExt%, %A_AhkPath%, 1
+    }
+
+    Menu, Tray, Add, AHK Scripts, :AHK
+    Menu, Tray, Icon, AHK Scripts, %A_AhkPath%, 1
+}
+
 AddToolMenuItems()
 {
+    ToolMenuCreated := false
     ToolsDir := Format("{1}\tools", A_WorkingDir)
     if !DirectoryExists(ToolsDir) {
         FileCreateDir, %ToolsDir%
@@ -76,7 +108,7 @@ AddToolMenuItems()
         isRootFile := !isDirectory and isRoot
         isSubDir := isDirectory and !isRoot
 
-        FileList .= isDirectory "`t" !isSubDir "`t" A_LoopFileDir "`t" A_LoopFileLongPath "`n"   
+        FileList .= isDirectory "`t" !isSubDir "`t" A_LoopFileDir "`t" A_LoopFileLongPath "`n"
     }
 
     Sort, FileList
@@ -108,6 +140,8 @@ AddToolMenuItems()
         {
             AddMenuItem(FileItem4)
         }
+
+        ToolMenuCreated := true
     }
 
     Sort, RootFileList
@@ -118,6 +152,13 @@ AddToolMenuItems()
             continue
 
         AddMenuItem(A_LoopField)
+
+        ToolMenuCreated := true
+    }
+
+    if !ToolMenuCreated
+    {
+        return
     }
 
     Menu, Tray, Add, Tools, :Tools
@@ -146,6 +187,13 @@ AddMenuItem(Path)
     {
         Menu, %ParentDirectoryName%, Icon, %LoopItemNameNoExt%, %A_AhkPath%, 1
     }
+}
+
+AddMenu(MenuName) ; Attach submenu to next level
+{
+    SplitPath, MenuName, DirName, OutDir
+    Menu, %OutDir%, Add, %DirName%, :%MenuName%
+    Menu, %OutDir%, Icon, %DirName%, imageres.dll, -10
 }
 
 AddGameTrayMenuItems()
@@ -186,7 +234,7 @@ AddStandardTrayMenuItems()
 
 BrowseGameFiles()
 {
-    static findInstallScriptExists := FileExist("scripts\Open-GameDirectory.ps1")    
+    static findInstallScriptExists := FileExist("scripts\Open-GameDirectory.ps1")
     if (findInstallScriptExists) {
         command := Format("{1}{2}{3} {4}", "Set-ExecutionPolicy Bypass -Scope Process -Force;", A_ScriptDir, "\scripts\Open-GameDirectory.ps1 ", AppId)
         Run, powershell.exe -windowstyle hidden %command%
@@ -235,6 +283,13 @@ LaunchOBS()
     }
 }
 
-LaunchTool(ToolPath) {
+LaunchAHK(AHKScriptPath)
+{
+    SplitPath, AHKScriptPath,, AHKScriptDirectory
+    Run, %AHKScriptPath%, %AHKScriptDirectory%
+}
+
+LaunchTool(ToolPath)
+{
     Run, %ToolPath%
 }
