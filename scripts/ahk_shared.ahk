@@ -236,8 +236,8 @@ BrowseGameFiles()
 {
     static findInstallScriptExists := FileExist("scripts\Open-GameDirectory.ps1")
     if (findInstallScriptExists) {
-        command := Format("{1}{2}{3} {4}", "Set-ExecutionPolicy Bypass -Scope Process -Force;", A_ScriptDir, "\scripts\Open-GameDirectory.ps1 ", AppId)
-        Run, powershell.exe -windowstyle hidden %command%
+        command := Format("{1}{2} '{3}'", A_ScriptDir, "\scripts\Open-GameDirectory.ps1 -AppName", GameName)
+        Run, powershell.exe -ExecutionPolicy Bypass -windowstyle hidden "" %command% ""
     }
 }
 
@@ -245,8 +245,8 @@ SaveDirHandler()
 {
     static openUserDataScriptExists := FileExist("scripts\Open-SteamUserData.ps1")
     if (openUserDataScriptExists) {
-        command := Format("{1}{2}{3} {4}", "Set-ExecutionPolicy Bypass -Scope Process -Force;", A_ScriptDir, "\scripts\Open-SteamUserData.ps1 ", AppId)
-        Run, powershell.exe -windowstyle hidden %command%
+        command := Format("{1}{2} {3}", A_ScriptDir, "\scripts\Open-SteamUserData.ps1 -AppId", AppId)
+        Run, powershell.exe -ExecutionPolicy Bypass -windowstyle hidden %command%
     }
 }
 

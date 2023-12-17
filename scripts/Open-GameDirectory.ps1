@@ -1,14 +1,15 @@
 using namespace System.IO
 using namespace System.Text.RegularExpressions
+using namespace System.Windows
 
-Add-Type -AssemblyName PresentationFramework
+param(
+    [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+    [Alias('Name', 'Game', 'App')]
+    [ValidateNotNullOrEmpty()]
+    [string]$AppName
+)
 
-$scriptName = Split-Path $PSCommandPath -Leaf
-
-if ($args.Count -lt 1) {
-    Write-Host "No arguments passed to '$scriptName'."
-    return
-}
+Add-Type -AssemblyName PresentationCore, PresentationFramework
 
 Function Open-Directory([string] $dir)
 {
@@ -26,11 +27,10 @@ Function Get-SteamPath
     return $steamInstallPath
 }
 
-$gameName = $args[0]
 $steamPath = Get-SteamPath
 
 $defaultInstallDir = Join-Path $steamPath "\steamapps\common"
-$defaultInstall = Join-Path $defaultInstallDir $gameName
+$defaultInstall = Join-Path $defaultInstallDir $AppName
 
 if (Test-Path $defaultInstall) {
     Open-Directory $defaultInstall
@@ -40,32 +40,37 @@ if (Test-Path $defaultInstall) {
 $libraryConfigPath = Join-Path $steamPath "steamapps\libraryfolders.vdf"
 
 if (!(Test-Path $libraryConfigPath)) {
-    Throw "Couldn't find '$gameName' in the default install directory and no library config was found."
+    Throw "Couldn't find '$AppName' in the default install directory and no library config was found."
 }
 
 $libraryConfig = [File]::ReadAllText($libraryConfigPath)
-$libraryRegex = New-Object Regex('\"(?<id>[0-9]+)\"\t{2}\"(?<path>.+)\"')    
+$libraryRegex = [Regex]::new('\"path\"\t{2}\"(?<path>.+?)\"')
 [MatchCollection] $matches = $libraryRegex.Matches($libraryConfig)
+
+$id = 0
 
 foreach ($match in $matches)
 {
-    $id = $match.Groups["id"].Value
     $path = $match.Groups["path"].Value
+    $path = [Path]::GetFullPath($path)
 
-    Write-Host "Checking library $id with path '$path'"...
-
-    $libraryPath = Join-path $path "steamapps\common\"
-    $gamePath = Join-Path $libraryPath $gameName
+    $libraryPath = Join-Path $path "steamapps\common\"
+    $gamePath = Join-Path $libraryPath $AppName
 
     $gamePath = [Path]::GetFullPath($gamePath)
 
+    Write-Host "Checking library $id with path '$path'"...
+
     if (Test-Path $gamePath)
     {
-        Write-Host "Found $gameName at '$gamePath'."
+        Write-Host "Found $AppName at '$gamePath'." -ForegroundColor Green
 
         Open-Directory $gamePath
+
         return
     }
+
+    $id++
 }
 
 Throw "Unable to find the install directory of '$gameName'."

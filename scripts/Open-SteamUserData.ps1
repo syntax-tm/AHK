@@ -1,14 +1,14 @@
 using namespace System.IO
 using namespace System.Text.RegularExpressions
+using namespace System.Windows
 
-Add-Type -AssemblyName PresentationFramework
+param(
+    [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+    [Alias('App', 'Id')]
+    [uint32]$AppId
+)
 
-$scriptName = Split-Path $PSCommandPath -Leaf
-
-if ($args.Count -lt 1) {
-    Write-Host "No arguments passed to '$scriptName'."
-    return
-}
+Add-Type -AssemblyName PresentationCore, PresentationFramework
 
 Function Open-Directory([string] $dir)
 {
@@ -32,20 +32,22 @@ Function Get-SteamUserID
     return $userId
 }
 
-$gameId = $args[0]
 $steamPath = Get-SteamPath
 $userId = Get-SteamUserID
 
-if ($userId -ne $null -and $userId -ne 0)
+if ($null -ne $userId -and $userId -ne 0)
 {
-    $gameDataDir = Join-Path $steamPath "\userdata" $userId $gameId
+    $gameDataDir = Join-Path $steamPath "userdata\$userId\$AppId\remote"
+
+    #$gameDataDir = [Path]::Join($steamPath, "userdata", $userId, $AppId, "remote")
+    #$gameDataDir = Join-Path -Path $steamPath, "userdata", $userId, $AppId -ChildPath "remote"
     if (Test-Path $gameDataDir) {
         Open-Directory $gameDataDir
         return
     }
 }
 
-$message = "An error occurred attempting to open the user data for game '$gameId'. Please verify that Steam is "
+$message = "An error occurred attempting to open the user data for app id '$AppId'. Please verify that Steam is "
 $message += "running and that you are signed in and try again."
 
 [MessageBox]::Show($message, "Unable to Open User Data", [MessageBoxButton]::OK, [MessageBoxImage]::Warning)
